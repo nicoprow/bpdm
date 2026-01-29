@@ -1,0 +1,7 @@
+bpdm:
+  task:
+    timeoutCheckCron: "-"
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 2
