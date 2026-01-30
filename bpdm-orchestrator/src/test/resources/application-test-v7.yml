@@ -1,3 +1,6 @@
+test:
+  v7:
+    enabled: true
 bpdm:
   task:
     timeoutCheckCron: "-"

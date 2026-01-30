@@ -21,12 +21,20 @@ package org.eclipse.tractusx.bpdm.orchestrator.v7.config
 
 import org.eclipse.tractusx.bpdm.common.util.BpdmWebClientProvider
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestClientProviderV7
+import org.eclipse.tractusx.bpdm.test.containers.KeyCloakInitializer
+import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
+@ConditionalOnProperty(name = ["test.v7.enabled"], havingValue = "true", matchIfMissing = false)
 class OrchestratorTestClientV7Config {
+
+    companion object{
+        const val ORCHESTRATOR_CLIENT_QUALIFIER = "orchestratorClientV7"
+    }
 
     @Bean
     fun orchestratorTestClientProviderV7(
@@ -35,5 +43,13 @@ class OrchestratorTestClientV7Config {
     ): OrchestratorTestClientProviderV7{
         return OrchestratorTestClientProviderV7(webServerApplicationContext.webServer!!, clientProvider)
     }
+
+    @Bean(name = [ORCHESTRATOR_CLIENT_QUALIFIER])
+    fun orchestratorClientV7(
+        testClientProvider: OrchestratorTestClientProviderV7
+    ): OrchestrationApiClient{
+        return testClientProvider.createClient(KeyCloakInitializer.CLIENT_ID_OPERATOR)
+    }
+
 
 }
