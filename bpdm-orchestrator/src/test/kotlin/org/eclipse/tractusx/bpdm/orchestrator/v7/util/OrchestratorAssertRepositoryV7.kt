@@ -23,24 +23,54 @@ import org.assertj.core.api.Assertions
 import org.eclipse.tractusx.orchestrator.api.model.TaskClientStateDto
 import org.eclipse.tractusx.orchestrator.api.model.TaskCreateResponse
 import org.eclipse.tractusx.orchestrator.api.model.TaskProcessingStateDto
+import org.eclipse.tractusx.orchestrator.api.model.TaskStateResponse
+import org.eclipse.tractusx.orchestrator.api.model.TaskStepReservationEntryDto
+import org.eclipse.tractusx.orchestrator.api.model.TaskStepReservationResponse
 import java.time.temporal.ChronoUnit
+import kotlin.collections.zip
 
 class OrchestratorAssertRepositoryV7 {
 
 
-    fun assertTaskCreateResponseEqual(actual: TaskCreateResponse, expected: TaskCreateResponse){
-        assertCreatedBusinessPartnerClientStatesEqual(actual.createdTasks, expected.createdTasks)
+    fun assertTaskCreateResponseEqual(actual: TaskCreateResponse, expected: TaskCreateResponse, isForNewRecord: Boolean){
+        assertBusinessPartnerClientStatesEqual(actual.createdTasks, expected.createdTasks, ignoreTaskId = true, ignoreRecordId = isForNewRecord)
     }
 
+    fun assertTaskStateResponseEqual(actual: TaskStateResponse, expected: TaskStateResponse){
+        assertBusinessPartnerClientStatesEqual(actual.tasks, expected.tasks, ignoreTaskId = false, ignoreRecordId = false)
+    }
 
-    fun assertCreatedBusinessPartnerClientStatesEqual(actual: List<TaskClientStateDto>, expected: List<TaskClientStateDto>){
+    fun assertTaskReservationResponseEqual(actual: TaskStepReservationResponse, expected: TaskStepReservationResponse, ignoreRecordId: Boolean){
+        assertTaskReservationEntriesEqual(actual.reservedTasks, expected.reservedTasks, ignoreRecordId)
+        Assertions.assertThat(actual.timeout).isCloseTo(expected.timeout, Assertions.within(1, ChronoUnit.SECONDS))
+    }
+
+    fun assertTaskReservationEntriesEqual(actual: List<TaskStepReservationEntryDto>, expected: List<TaskStepReservationEntryDto>, ignoreRecordId: Boolean){
+        val ignoredFields = listOfNotNull(
+            TaskStepReservationEntryDto::recordId.name.takeIf { ignoreRecordId }
+        ).toTypedArray()
+
         Assertions.assertThat(actual)
             .usingRecursiveComparison()
-            .ignoringFields(
-                TaskClientStateDto::taskId.name,
-                TaskClientStateDto::recordId.name,
-                TaskClientStateDto::processingState.name
-            )
+            .ignoringFields(*ignoredFields)
+            .isEqualTo(expected)
+    }
+
+    fun assertBusinessPartnerClientStatesEqual(
+        actual: List<TaskClientStateDto>,
+        expected: List<TaskClientStateDto>,
+        ignoreTaskId: Boolean = true,
+        ignoreRecordId: Boolean = true
+    ){
+        val ignoredFields = listOfNotNull(
+            TaskClientStateDto::taskId.name.takeIf { ignoreTaskId },
+            TaskClientStateDto::recordId.name.takeIf { ignoreRecordId },
+            TaskClientStateDto::processingState.name
+        ).toTypedArray()
+
+        Assertions.assertThat(actual)
+            .usingRecursiveComparison()
+            .ignoringFields(*ignoredFields)
             .isEqualTo(expected)
 
         assertProcessingStates(actual.map { it.processingState }, expected.map { it.processingState })

@@ -19,11 +19,13 @@
 
 package org.eclipse.tractusx.bpdm.orchestrator.v7
 
+import org.assertj.core.api.Assertions
 import org.eclipse.tractusx.orchestrator.api.model.TaskCreateRequest
 import org.eclipse.tractusx.orchestrator.api.model.TaskCreateResponse
 import org.eclipse.tractusx.orchestrator.api.model.TaskMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import org.springframework.web.reactive.function.client.WebClientResponseException
 
 class BusinessPartnerTaskCreationV7IT: UnscheduledOrchestratorTestV7() {
 
@@ -42,7 +44,49 @@ class BusinessPartnerTaskCreationV7IT: UnscheduledOrchestratorTestV7() {
         //THEN
         val expectedEntry = resultFactory.buildCreatedTaskClientState(requestEntry.businessPartner, taskMode)
         val expectedResponse = TaskCreateResponse(listOf(expectedEntry))
-        assertRepo.assertTaskCreateResponseEqual(response, expectedResponse)
+        assertRepo.assertTaskCreateResponseEqual(response, expectedResponse, isForNewRecord = true)
+    }
+
+    /**
+     * GIVEN sharing member record
+     * WHEN user requests new task for new data for sharing member record
+     * THEN user sees created task in step first step for sharing member record
+     */
+    @ParameterizedTest
+    @EnumSource(TaskMode::class)
+    fun `create new sharing member update task for existing sharing member record`(taskMode: TaskMode){
+        //GIVEN
+        val recordId = testDataClient.createTask("$testName 1").recordId
+
+        //WHEN
+        val newTask = requestFactory.buildTaskCreateEntry("$testName 2").copy(recordId = recordId)
+        val createRequest = TaskCreateRequest(taskMode, listOf(newTask))
+        val createResult = orchestratorClient.goldenRecordTasks.createTasks(createRequest)
+
+        //THEN
+        val expectedResult = TaskCreateResponse(listOf(resultFactory.buildCreatedTaskClientState(
+            businessPartner = createRequest.requests.single().businessPartner,
+            taskMode = taskMode,
+            recordId = recordId
+        )))
+        assertRepo.assertTaskCreateResponseEqual(createResult, expectedResult, isForNewRecord = false)
+    }
+
+    /**
+     * WHEN user requests new task for non-existing sharing member record
+     * THEN user sees 400 BAD REQUEST error
+     */
+    @ParameterizedTest
+    @EnumSource(TaskMode::class)
+    fun `try create task for not existing sharing member record`(taskMode: TaskMode){
+        //WHEN
+        val newTask = requestFactory.buildTaskCreateEntry(testName).copy(recordId = "NOT EXISTING")
+        val requestBody = TaskCreateRequest(taskMode, listOf(newTask))
+        val createRequest: () -> Unit
+                =  { orchestratorClient.goldenRecordTasks.createTasks(requestBody) }
+
+        //THEN
+        Assertions.assertThatThrownBy(createRequest).isInstanceOf(WebClientResponseException.BadRequest::class.java)
     }
 
 }

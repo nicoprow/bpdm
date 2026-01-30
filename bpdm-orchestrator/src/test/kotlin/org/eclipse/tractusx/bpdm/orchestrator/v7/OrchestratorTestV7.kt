@@ -21,6 +21,7 @@ package org.eclipse.tractusx.bpdm.orchestrator.v7
 
 import org.eclipse.tractusx.bpdm.orchestrator.v7.config.OrchestratorTestClientV7Config
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorAssertRepositoryV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestDataClientV7
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpectedResultFactoryV7
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryV7
 import org.eclipse.tractusx.bpdm.test.util.DbTestHelpers
@@ -41,6 +42,8 @@ abstract class OrchestratorTestV7 {
     lateinit var resultFactory: OrchestratorExpectedResultFactoryV7
     @Autowired
     lateinit var assertRepo: OrchestratorAssertRepositoryV7
+    @Autowired
+    lateinit var testDataClient: OrchestratorTestDataClientV7
 
     lateinit var testName: String
 

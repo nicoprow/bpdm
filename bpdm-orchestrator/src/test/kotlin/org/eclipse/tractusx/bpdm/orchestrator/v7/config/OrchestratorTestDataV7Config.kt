@@ -22,9 +22,13 @@ package org.eclipse.tractusx.bpdm.orchestrator.v7.config
 import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
 import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorAssertRepositoryV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestDataClientV7
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.BusinessPartnerTestDataFactory
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpectedResultFactoryV7
+import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryCommon
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryV7
+import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,7 +41,7 @@ class OrchestratorTestDataV7Config {
     fun orchestratorRequestFactoryV7(
         businessPartnerTestDataFactory: BusinessPartnerTestDataFactory
     ): OrchestratorRequestFactoryV7{
-        return OrchestratorRequestFactoryV7(businessPartnerTestDataFactory)
+        return OrchestratorRequestFactoryV7(businessPartnerTestDataFactory, OrchestratorRequestFactoryCommon())
     }
 
     @Bean
@@ -55,5 +59,14 @@ class OrchestratorTestDataV7Config {
             taskConfigProperties.taskRetentionTimeout,
             stateMachineConfigProperties.modeSteps
         )
+    }
+
+    @Bean
+    fun orchestratorTestDataClientV7(
+        @Qualifier(OrchestratorTestClientV7Config.ORCHESTRATOR_CLIENT_QUALIFIER)
+        orchestratorClient: OrchestrationApiClient,
+        requestFactory: OrchestratorRequestFactoryV7
+    ): OrchestratorTestDataClientV7{
+        return OrchestratorTestDataClientV7(orchestratorClient, requestFactory)
     }
 }
