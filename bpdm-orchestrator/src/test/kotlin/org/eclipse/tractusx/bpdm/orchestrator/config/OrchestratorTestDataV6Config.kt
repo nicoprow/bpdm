@@ -17,10 +17,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v6.config
+package org.eclipse.tractusx.bpdm.orchestrator.config
 
-import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
-import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
 import org.eclipse.tractusx.bpdm.orchestrator.v6.util.OrchestratorAssertRepositoryV6
 import org.eclipse.tractusx.bpdm.orchestrator.v6.util.OrchestratorTestDataClientV6
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpectedResultFactoryV6
@@ -28,12 +26,10 @@ import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestF
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryV6
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.TestMetadataReferences
 import org.eclipse.tractusx.orchestrator.api.v6.client.OrchestratorApiClientV6
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(name = ["test.v6.enabled"], havingValue = "true", matchIfMissing = false)
 class OrchestratorTestDataV6Config {
 
     @Bean

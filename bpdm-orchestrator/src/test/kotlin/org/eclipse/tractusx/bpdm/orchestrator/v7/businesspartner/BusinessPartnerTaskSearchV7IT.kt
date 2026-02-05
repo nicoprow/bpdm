@@ -17,14 +17,11 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v7
+package org.eclipse.tractusx.bpdm.orchestrator.v7.businesspartner
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.orchestrator.api.model.ResultState
-import org.eclipse.tractusx.orchestrator.api.model.StepState
-import org.eclipse.tractusx.orchestrator.api.model.TaskStateRequest
-import org.eclipse.tractusx.orchestrator.api.model.TaskStateResponse
-import org.eclipse.tractusx.orchestrator.api.model.TaskStep
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
@@ -38,7 +35,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search created task`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, createdTask.recordId)))
@@ -47,7 +44,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         //THEN
         val expectedResponse = TaskStateResponse(listOf(createdTask))
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -58,8 +55,8 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search reserved task`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
-        testDataClient.reserveTasks(createdTask.processingState.step)
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
+        testDataClient.reserveBusinessPartnerTasks(createdTask.processingState.step)
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, createdTask.recordId)))
@@ -69,7 +66,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         val expectedEntry = createdTask.copy(processingState = createdTask.processingState.copy(stepState = StepState.Reserved))
         val expectedResponse = TaskStateResponse(listOf(expectedEntry))
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -80,8 +77,8 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search resolved task`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
-        val resultRequest = testDataClient.reserveAndResolveTask(createdTask.taskId, createdTask.processingState.step, "Resolved $testName")
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
+        val resultRequest = testDataClient.reserveAndResolveBusinessPartnerTask(createdTask.taskId, createdTask.processingState.step, "Resolved $testName")
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, createdTask.recordId)))
@@ -91,7 +88,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         val expectedEntry = createdTask.copy(businessPartnerResult = resultRequest.businessPartner, processingState = createdTask.processingState.copy(step = TaskStep.PoolSync))
         val expectedResponse = TaskStateResponse(listOf(expectedEntry))
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -102,9 +99,9 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search successful task`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
-        testDataClient.reserveAndResolveTask(createdTask.taskId, TaskStep.CleanAndSync, "Resolved $testName")
-        val successRequest = testDataClient.reserveAndResolveTask(createdTask.taskId, TaskStep.PoolSync, "Success $testName")
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
+        testDataClient.reserveAndResolveBusinessPartnerTask(createdTask.taskId, TaskStep.CleanAndSync, "Resolved $testName")
+        val successRequest = testDataClient.reserveAndResolveBusinessPartnerTask(createdTask.taskId, TaskStep.PoolSync, "Success $testName")
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, createdTask.recordId)))
@@ -121,7 +118,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         )
         val expectedResponse = TaskStateResponse(listOf(expectedEntry))
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -132,8 +129,8 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search failed task`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
-        val failRequest = testDataClient.failTask(createdTask.taskId, createdTask.processingState.step)
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
+        val failRequest = testDataClient.failBusinessPartnerTask(createdTask.taskId, createdTask.processingState.step)
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, createdTask.recordId)))
@@ -151,7 +148,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         )
         val expectedResponse = TaskStateResponse(listOf(expectedEntry))
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -176,7 +173,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search not existing sharing member record`(){
         //GIVEN
-        val createdTask = testDataClient.createTask(testName)
+        val createdTask = testDataClient.createBusinessPartnerTask(testName)
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask.taskId, "NOT EXISTING")))
@@ -185,7 +182,7 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         //THEN
         val expectedResponse = TaskStateResponse(emptyList())
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 
     /**
@@ -196,8 +193,8 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `search not matching task and record id`(){
         //GIVEN
-        val createdTask1 = testDataClient.createTask("$testName 1")
-        val createdTask2 = testDataClient.createTask("$testName 2")
+        val createdTask1 = testDataClient.createBusinessPartnerTask("$testName 1")
+        val createdTask2 = testDataClient.createBusinessPartnerTask("$testName 2")
 
         //WHEN
         val searchRequest = TaskStateRequest(listOf(TaskStateRequest.Entry(createdTask1.taskId, createdTask2.recordId)))
@@ -206,6 +203,32 @@ class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
         //THEN
         val expectedResponse = TaskStateResponse(emptyList())
 
-        assertRepo.assertTaskStateResponseEqual(searchResponse, expectedResponse)
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
+    }
+
+    /**
+     * GIVEN aborted business partner task
+     * WHEN user searches for task
+     * THEN user finds task as aborted
+     */
+    @Test
+    fun `search aborted business partner task`(){
+        //GIVEN
+        val abortedTask = testDataClient.createBusinessPartnerTask(testName)
+        testDataClient.createBusinessPartnerTask(testName, recordId = abortedTask.recordId)
+
+        //WHEN
+        val searchEntry = TaskStateRequest.Entry(abortedTask.taskId, abortedTask.recordId)
+        val searchResponse = orchestratorClient.goldenRecordTasks.searchTaskStates(TaskStateRequest(listOf(searchEntry)))
+
+        //THEN
+        val expectedResponse = TaskStateResponse(listOf(abortedTask.copy(
+            processingState = abortedTask.processingState.copy(
+                resultState = ResultState.Error,
+                stepState = StepState.Error
+            )
+        )))
+
+        assertRepo.assertBusinessPartnerTaskStateResponseEqual(searchResponse, expectedResponse)
     }
 }

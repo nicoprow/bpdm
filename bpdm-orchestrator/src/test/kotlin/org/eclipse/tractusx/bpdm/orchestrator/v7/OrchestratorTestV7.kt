@@ -19,7 +19,6 @@
 
 package org.eclipse.tractusx.bpdm.orchestrator.v7
 
-import org.eclipse.tractusx.bpdm.orchestrator.v7.config.OrchestratorTestClientV7Config
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorAssertRepositoryV7
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestDataClientV7
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpectedResultFactoryV7
@@ -28,13 +27,11 @@ import org.eclipse.tractusx.bpdm.test.util.DbTestHelpers
 import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
 import org.junit.jupiter.api.TestInfo
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Qualifier
 
 abstract class OrchestratorTestV7 {
     @Autowired
     lateinit var databaseHelpers: DbTestHelpers
     @Autowired
-    @Qualifier(OrchestratorTestClientV7Config.ORCHESTRATOR_CLIENT_QUALIFIER)
     lateinit var orchestratorClient: OrchestrationApiClient
     @Autowired
     lateinit var requestFactory: OrchestratorRequestFactoryV7

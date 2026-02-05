@@ -20,12 +20,8 @@
 package org.eclipse.tractusx.bpdm.test.testdata.orchestrator
 
 import org.eclipse.tractusx.bpdm.common.dto.AddressType
-import org.eclipse.tractusx.orchestrator.api.model.BusinessPartner
-import org.eclipse.tractusx.orchestrator.api.model.LegalEntity
-import org.eclipse.tractusx.orchestrator.api.model.TaskCreateRequest
-import org.eclipse.tractusx.orchestrator.api.model.TaskCreateRequestEntry
-import org.eclipse.tractusx.orchestrator.api.model.TaskMode
-import org.eclipse.tractusx.orchestrator.api.model.UncategorizedProperties
+import org.eclipse.tractusx.orchestrator.api.model.*
+import java.time.LocalDate
 import java.util.*
 import kotlin.random.Random
 
@@ -34,10 +30,30 @@ class OrchestratorRequestFactoryV7(
     private val commonFactory: OrchestratorRequestFactoryCommon
 ) {
 
-    fun buildTaskCreateEntry(seed: String): TaskCreateRequestEntry {
+    fun buildBusinessPartnerTaskCreateEntry(seed: String): TaskCreateRequestEntry {
         return TaskCreateRequestEntry(
             recordId = UUID.randomUUID().toString(),
             businessPartner = buildAdditionalAddressOfSiteBusinessPartner(seed)
+        )
+    }
+
+    fun buildRelationTaskCreateEntry(seed: String, recordId: String?): TaskCreateRelationsRequestEntry {
+        return TaskCreateRelationsRequestEntry(
+            recordId = recordId,
+            businessPartnerRelations = buildRelation(seed)
+        )
+    }
+
+    fun buildRelation(seed: String): BusinessPartnerRelations{
+        val random = createRandomFromSeed(seed)
+        return BusinessPartnerRelations(
+            RelationType.entries.random(random),
+            "$seed Source BpnL",
+            "$seed Target BpnL",
+            validityPeriods = listOf(
+                RelationValidityPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1)),
+                RelationValidityPeriod(LocalDate.of(2026, 1, 1), null),
+            )
         )
     }
 

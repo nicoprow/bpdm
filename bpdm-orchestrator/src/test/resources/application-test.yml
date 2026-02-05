@@ -16,8 +16,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 ################################################################################
-
+bpdm:
+  task:
+    timeoutCheckCron: "-"
+  api:
+    upsert-limit: 100
 spring:
   datasource:
     hikari:
-      maximum-pool-size: 5
+      maximum-pool-size: 2

@@ -17,10 +17,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v7.config
+package org.eclipse.tractusx.bpdm.orchestrator.config
 
-import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
-import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorAssertRepositoryV7
 import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestDataClientV7
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.BusinessPartnerTestDataFactory
@@ -28,13 +26,10 @@ import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpected
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryCommon
 import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryV7
 import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(name = ["test.v7.enabled"], havingValue = "true", matchIfMissing = false)
 class OrchestratorTestDataV7Config {
 
     @Bean
@@ -63,7 +58,6 @@ class OrchestratorTestDataV7Config {
 
     @Bean
     fun orchestratorTestDataClientV7(
-        @Qualifier(OrchestratorTestClientV7Config.ORCHESTRATOR_CLIENT_QUALIFIER)
         orchestratorClient: OrchestrationApiClient,
         requestFactory: OrchestratorRequestFactoryV7
     ): OrchestratorTestDataClientV7{

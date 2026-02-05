@@ -17,19 +17,17 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v6.config
+package org.eclipse.tractusx.bpdm.orchestrator.config
 
 import org.eclipse.tractusx.bpdm.common.util.BpdmWebClientProvider
 import org.eclipse.tractusx.bpdm.orchestrator.v6.util.OrchestratorTestClientProviderV6
 import org.eclipse.tractusx.bpdm.test.containers.KeyCloakInitializer
 import org.eclipse.tractusx.orchestrator.api.v6.client.OrchestratorApiClientV6
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConditionalOnProperty(name = ["test.v6.enabled"], havingValue = "true", matchIfMissing = false)
 class OrchestratorTestClientV6Config {
 
     @Bean

@@ -17,39 +17,16 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.performance
+package org.eclipse.tractusx.bpdm.orchestrator.v7
 
-import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
-import org.eclipse.tractusx.bpdm.test.containers.PostgreSQLContextInitializer
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.BusinessPartnerTestDataFactory
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryCommon
-import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
 import java.time.Duration
 import java.time.Instant
 import java.util.*
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = [
-        "bpdm.security.enabled=false",
-        "bpdm.task.timeoutCheckCron=-"
-    ]
-)
-@ContextConfiguration(initializers = [PostgreSQLContextInitializer::class])
-class OrchestratorPerformanceIT@Autowired constructor(
-    private val orchestratorClient: OrchestrationApiClient,
-    stateMachineConfigProperties: StateMachineConfigProperties
-) {
-
-    private val testDataFactory = BusinessPartnerTestDataFactory(OrchestratorRequestFactoryCommon())
-    private val taskMode = stateMachineConfigProperties.modeSteps.keys.first()
-    private val step = stateMachineConfigProperties.modeSteps[taskMode]!!.first()
+class OrchestratorPerformanceV7IT: UnscheduledOrchestratorTestV7() {
 
     @ParameterizedTest
     @ValueSource(ints = [100])
@@ -107,16 +84,16 @@ class OrchestratorPerformanceIT@Autowired constructor(
 
     private fun createNewRecordTasks(size: Int): List<TaskStateRequest.Entry>{
         return (1 .. size)
-            .map { TaskCreateRequestEntry(null, testDataFactory.createFullBusinessPartner("BP$it")) }
-            .let { TaskCreateRequest(mode = taskMode, requests = it) }
+            .map { TaskCreateRequestEntry(null, requestFactory.buildAdditionalAddressOfSiteBusinessPartner("BP$it")) }
+            .let { TaskCreateRequest(mode = TaskMode.UpdateFromSharingMember, requests = it) }
             .let {  orchestratorClient.goldenRecordTasks.createTasks(it).createdTasks }
             .map { TaskStateRequest.Entry(it.taskId, it.recordId) }
     }
 
     private fun updateRecords(recordIds: List<String>): List<TaskStateRequest.Entry>{
         return recordIds
-            .map { TaskCreateRequestEntry(it, testDataFactory.createFullBusinessPartner(it)) }
-            .let { TaskCreateRequest(mode = taskMode, requests = it) }
+            .map { TaskCreateRequestEntry(it, requestFactory.buildAdditionalAddressOfSiteBusinessPartner(it)) }
+            .let { TaskCreateRequest(mode = TaskMode.UpdateFromSharingMember, requests = it) }
             .let {  orchestratorClient.goldenRecordTasks.createTasks(it).createdTasks }
             .map { TaskStateRequest.Entry(it.taskId, it.recordId) }
     }
@@ -126,15 +103,15 @@ class OrchestratorPerformanceIT@Autowired constructor(
     }
 
     private fun reserveTasks(size: Int): List<String>{
-        return TaskStepReservationRequest(size, step)
+        return TaskStepReservationRequest(size, TaskStep.CleanAndSync)
             .let { orchestratorClient.goldenRecordTasks.reserveTasksForStep(it).reservedTasks }
             .map { it.taskId }
     }
 
     private fun resolveTasks(taskIds: List<String>){
         taskIds
-            .map { TaskStepResultEntryDto(it, testDataFactory.createFullBusinessPartner("Resolved $it")) }
-            .run { orchestratorClient.goldenRecordTasks.resolveStepResults(TaskStepResultRequest(step, this)) }
+            .map { TaskStepResultEntryDto(it, requestFactory.buildAdditionalAddressOfSiteBusinessPartner("Resolved $it")) }
+            .run { orchestratorClient.goldenRecordTasks.resolveStepResults(TaskStepResultRequest(TaskStep.CleanAndSync, this)) }
     }
 
     data class PerformanceResult(

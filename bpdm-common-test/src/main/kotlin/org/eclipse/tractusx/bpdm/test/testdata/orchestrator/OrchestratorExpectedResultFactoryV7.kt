@@ -29,7 +29,7 @@ class OrchestratorExpectedResultFactoryV7(
     val taskStepTransitions: Map<TaskMode, List<TaskStep>>
 ) {
 
-    fun buildCreatedTaskClientState(
+    fun buildCreatedBusinessPartnerTaskClientState(
         businessPartner: BusinessPartner,
         taskMode: TaskMode,
         taskId: String = "any UUID",
@@ -43,6 +43,30 @@ class OrchestratorExpectedResultFactoryV7(
             recordId = recordId,
             businessPartnerResult = businessPartner,
             processingState = TaskProcessingStateDto(
+                resultState = ResultState.Pending,
+                step = taskStepTransitions[taskMode]!!.first(),
+                stepState = StepState.Queued,
+                errors = emptyList(),
+                modifiedAt = modifiedAt,
+                createdAt = createdAt,
+                timeout = createdAt.plus(retentionTimeout)
+            )
+        )
+    }
+
+    fun buildCreatedRelationTaskClientState(
+        relation: BusinessPartnerRelations,
+        taskMode: TaskMode,
+        taskId: String = "any UUID",
+        recordId: String = "any UUID",
+        modifiedAt: Instant = Instant.now(),
+        createdAt: Instant = Instant.now()
+    ): TaskClientRelationsStateDto{
+        return TaskClientRelationsStateDto(
+            taskId = taskId,
+            recordId = recordId,
+            businessPartnerRelationsResult = relation,
+            processingState = TaskProcessingRelationsStateDto(
                 resultState = ResultState.Pending,
                 step = taskStepTransitions[taskMode]!!.first(),
                 stepState = StepState.Queued,

@@ -20,25 +20,30 @@
 package org.eclipse.tractusx.bpdm.orchestrator.config
 
 import org.eclipse.tractusx.bpdm.common.util.BpdmWebClientProvider
-import org.eclipse.tractusx.bpdm.test.config.SelfClientConfigProperties
+import org.eclipse.tractusx.bpdm.orchestrator.v7.util.OrchestratorTestClientProviderV7
+import org.eclipse.tractusx.bpdm.test.containers.KeyCloakInitializer
 import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
-import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClientImpl
 import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class OrchestratorClientConfig{
+class OrchestratorTestClientV7Config {
+
     @Bean
-    fun orchestratorClient(
-        webServerAppCtxt: ServletWebServerApplicationContext,
-        selfClientConfigProperties: SelfClientConfigProperties,
-        webClientProvider: BpdmWebClientProvider
-    ): OrchestrationApiClient {
-        return OrchestrationApiClientImpl {
-            val properties = selfClientConfigProperties.copy(baseUrl = "http://localhost:${webServerAppCtxt.webServer!!.port}")
-            webClientProvider.builder(properties).build()
-        }
+    fun orchestratorTestClientProviderV7(
+        webServerApplicationContext: ServletWebServerApplicationContext,
+        clientProvider: BpdmWebClientProvider
+    ): OrchestratorTestClientProviderV7{
+        return OrchestratorTestClientProviderV7(webServerApplicationContext.webServer!!, clientProvider)
     }
+
+    @Bean
+    fun orchestratorClientV7(
+        testClientProvider: OrchestratorTestClientProviderV7
+    ): OrchestrationApiClient{
+        return testClientProvider.createClient(KeyCloakInitializer.CLIENT_ID_OPERATOR)
+    }
+
 
 }
