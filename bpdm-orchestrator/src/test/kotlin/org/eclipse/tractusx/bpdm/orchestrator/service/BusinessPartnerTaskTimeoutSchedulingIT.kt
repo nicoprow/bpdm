@@ -214,19 +214,6 @@ class GoldenRecordTaskControllerIT @Autowired constructor(
             .forEach { stateDto -> checkFunc(stateDto.processingState) }
     }
 
-    private fun assertProcessingStateDto(processingStateDto: TaskProcessingStateDto, resultState: ResultState, step: TaskStep, stepState: StepState) {
-        assertThat(processingStateDto.resultState).isEqualTo(resultState)
-        assertThat(processingStateDto.step).isEqualTo(step)
-        assertThat(processingStateDto.stepState).isEqualTo(stepState)
-    }
-
-    private fun assertBadRequestException(shouldRaiseThrowable: ThrowableAssert.ThrowingCallable) {
-        assertThatThrownBy(shouldRaiseThrowable)
-            .isInstanceOfSatisfying(WebClientResponseException::class.java) {
-                assertThat(it.statusCode).isEqualTo(HttpStatus.BAD_REQUEST)
-            }
-    }
-
     private fun TaskClientStateDto.toTaskSearchIdentity() = TaskStateRequest.Entry(taskId, recordId)
 
     private fun TaskStepReservationEntryDto.toTaskSearchIdentity(createdTasks: List<TaskClientStateDto>) =
