@@ -20,14 +20,14 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.businesspartner
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.time.Instant
 
-class BusinessPartnerTaskResolutionV7IT: UnscheduledOrchestratorTestV7() {
+class BusinessPartnerTaskResolutionV7IT: UnscheduledOrchestratorTestBaseV7() {
     /**
      * GIVEN reserved task
      * WHEN user resolves task as legal entity
@@ -231,9 +231,9 @@ class BusinessPartnerTaskResolutionV7IT: UnscheduledOrchestratorTestV7() {
     @Test
     fun `expect exception on posting too many business partner task results`() {
         //GIVEN
-        (1 .. 101).forEach { testDataClient.createBusinessPartnerTask("$testName $it") }
+        (1 .. 11).forEach { testDataClient.createBusinessPartnerTask("$testName $it") }
         val reservedTasks = (1 .. 2).flatMap {
-            orchestratorClient.goldenRecordTasks.reserveTasksForStep(TaskStepReservationRequest(100, step = TaskStep.CleanAndSync)).reservedTasks
+            orchestratorClient.goldenRecordTasks.reserveTasksForStep(TaskStepReservationRequest(10, step = TaskStep.CleanAndSync)).reservedTasks
         }
 
         //WHEN

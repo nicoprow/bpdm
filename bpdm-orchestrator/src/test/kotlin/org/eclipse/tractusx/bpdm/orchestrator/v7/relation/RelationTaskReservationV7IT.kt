@@ -20,7 +20,7 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.relation
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.TaskRelationsStepReservationEntryDto
 import org.eclipse.tractusx.orchestrator.api.model.TaskRelationsStepReservationResponse
 import org.eclipse.tractusx.orchestrator.api.model.TaskStep
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.time.Instant
 
-class RelationTaskReservationV7IT: UnscheduledOrchestratorTestV7() {
+class RelationTaskReservationV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN relation task in queue in step

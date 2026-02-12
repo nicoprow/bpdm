@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.Instant
 
-class OrchestratorAuthV7IT: UnscheduledOrchestratorTestV7() {
+class OrchestratorAuthV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     @Autowired
     private lateinit var testClientProvider: OrchestratorTestClientProviderV7

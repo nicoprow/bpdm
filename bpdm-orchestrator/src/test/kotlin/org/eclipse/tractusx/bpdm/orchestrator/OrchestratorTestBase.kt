@@ -17,34 +17,33 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v6
+package org.eclipse.tractusx.bpdm.orchestrator
 
-import org.eclipse.tractusx.bpdm.orchestrator.v6.util.OrchestratorAssertRepositoryV6
-import org.eclipse.tractusx.bpdm.orchestrator.v6.util.OrchestratorTestDataClientV6
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorExpectedResultFactoryV6
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryV6
+import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
+import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
 import org.eclipse.tractusx.bpdm.test.util.DbTestHelpers
-import org.eclipse.tractusx.orchestrator.api.v6.client.OrchestratorApiClientV6
 import org.junit.jupiter.api.TestInfo
 import org.springframework.beans.factory.annotation.Autowired
 
-abstract class OrchestratorTestV6 {
+/**
+ * Base class for all Orchestrator tests
+ *
+ * Comes with generic helpful util classes and functions for testing
+ */
+abstract class OrchestratorTestBase {
     @Autowired
     lateinit var databaseHelpers: DbTestHelpers
     @Autowired
-    lateinit var requestFactory: OrchestratorRequestFactoryV6
+    lateinit var taskConfigProperties: TaskConfigProperties
     @Autowired
-    lateinit var expectedResultFactory: OrchestratorExpectedResultFactoryV6
-    @Autowired
-    lateinit var assertRepository: OrchestratorAssertRepositoryV6
-    @Autowired
-    lateinit var orchestratorClient: OrchestratorApiClientV6
-    @Autowired
-    lateinit var testDataClient: OrchestratorTestDataClientV6
+    lateinit var stateMachineConfigProperties: StateMachineConfigProperties
 
     lateinit var testName: String
 
-    open fun beforeEach(testInfo: TestInfo){
+    /**
+     * Needs to be overwritten and annotated with @BeforeEach as Junit does not pick the annotation up from the base class
+     */
+    protected open fun beforeEach(testInfo: TestInfo){
         testName = testInfo.displayName
         databaseHelpers.truncateDbTables()
     }

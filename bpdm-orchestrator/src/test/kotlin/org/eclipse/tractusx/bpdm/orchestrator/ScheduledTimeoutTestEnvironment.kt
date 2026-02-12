@@ -17,13 +17,10 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.eclipse.tractusx.bpdm.orchestrator.v6
+package org.eclipse.tractusx.bpdm.orchestrator
 
-import org.eclipse.tractusx.bpdm.orchestrator.Application
 import org.eclipse.tractusx.bpdm.test.containers.KeyCloakInitializer
 import org.eclipse.tractusx.bpdm.test.containers.PostgreSQLContextInitializer
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInfo
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
@@ -33,11 +30,5 @@ import org.springframework.test.context.ContextConfiguration
     PostgreSQLContextInitializer::class,
     KeyCloakInitializer::class
 ])
-@ActiveProfiles("test")
-abstract  class UnscheduledOrchestratorTestV6: OrchestratorTestV6(){
-
-    @BeforeEach
-    override fun beforeEach(testInfo: TestInfo) {
-        super.beforeEach(testInfo)
-    }
-}
+@ActiveProfiles("test-timeout")
+annotation class ScheduledTimeoutTestEnvironment

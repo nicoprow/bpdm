@@ -20,13 +20,13 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.businesspartner
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
-class BusinessPartnerTaskCreationV7IT: UnscheduledOrchestratorTestV7() {
+class BusinessPartnerTaskCreationV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * WHEN gate creates a new task for new sharing member record

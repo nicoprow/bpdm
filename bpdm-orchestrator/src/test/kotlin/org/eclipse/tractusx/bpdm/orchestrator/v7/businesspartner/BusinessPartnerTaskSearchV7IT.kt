@@ -20,12 +20,12 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.businesspartner
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
-class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestV7() {
+class BusinessPartnerTaskSearchV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN created task

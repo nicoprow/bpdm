@@ -20,14 +20,14 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.sharingmemberrecord
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.SharingMemberRecord
 import org.eclipse.tractusx.orchestrator.api.model.SharingMemberRecordUpdateRequest
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import java.time.Instant
 
-class SharingMemberRecordUpdateV7IT: UnscheduledOrchestratorTestV7() {
+class SharingMemberRecordUpdateV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN existing sharing member record

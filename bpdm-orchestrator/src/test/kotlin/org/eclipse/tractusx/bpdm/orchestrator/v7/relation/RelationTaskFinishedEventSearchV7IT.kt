@@ -20,12 +20,12 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.relation
 
 import org.eclipse.tractusx.bpdm.common.dto.PaginationRequest
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class RelationTaskFinishedEventSearchV7IT: UnscheduledOrchestratorTestV7() {
+class RelationTaskFinishedEventSearchV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN relation task has been finished successfully

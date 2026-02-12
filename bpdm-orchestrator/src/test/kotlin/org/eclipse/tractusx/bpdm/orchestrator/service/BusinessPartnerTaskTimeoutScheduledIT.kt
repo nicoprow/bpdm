@@ -19,65 +19,22 @@
 
 package org.eclipse.tractusx.bpdm.orchestrator.service
 
-import io.mockk.every
-import io.mockk.verify
-import org.assertj.core.api.Assertions.*
-import org.assertj.core.api.ThrowableAssert
-import org.assertj.core.data.TemporalUnitOffset
-import org.eclipse.tractusx.bpdm.orchestrator.config.StateMachineConfigProperties
-import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
-import org.eclipse.tractusx.bpdm.test.containers.PostgreSQLContextInitializer
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.BusinessPartnerTestDataFactory
-import org.eclipse.tractusx.bpdm.test.testdata.orchestrator.OrchestratorRequestFactoryCommon
-import org.eclipse.tractusx.bpdm.test.util.DbTestHelpers
-import org.eclipse.tractusx.orchestrator.api.client.OrchestrationApiClient
+import org.assertj.core.api.Assertions.assertThat
+import org.eclipse.tractusx.bpdm.orchestrator.v7.ScheduledTimeoutOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import java.time.temporal.ChronoUnit
 
-val WITHIN_ALLOWED_TIME_OFFSET: TemporalUnitOffset = within(1, ChronoUnit.SECONDS)
 
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    properties = [
-        "bpdm.security.enabled=false",
-        "bpdm.api.upsert-limit=3",
-        "bpdm.task.timeoutCheckCron=* * * * * ?",       // check every sec
-        "bpdm.task.taskPendingTimeout=3s",
-        "bpdm.task.taskRetentionTimeout=5s"
-    ]
-)
-@ContextConfiguration(initializers = [PostgreSQLContextInitializer::class])
-class GoldenRecordTaskControllerIT @Autowired constructor(
-    private val orchestratorClient: OrchestrationApiClient,
-    private val taskConfigProperties: TaskConfigProperties,
-    private val dbTestHelpers: DbTestHelpers,
-    private val stateMachineConfigProperties: StateMachineConfigProperties
-) {
-
-    private val testDataFactory = BusinessPartnerTestDataFactory(OrchestratorRequestFactoryCommon())
-    private val defaultBusinessPartner1 = testDataFactory.createFullBusinessPartner("BP1")
-    private val defaultBusinessPartner2 = testDataFactory.createFullBusinessPartner("BP2")
-
-    @BeforeEach
-    fun cleanUp() {
-        dbTestHelpers.truncateDbTables()
-    }
+class GoldenRecordTaskControllerIT: ScheduledTimeoutOrchestratorTestBaseV7(){
 
     @ParameterizedTest
     @EnumSource(TaskMode::class)
     fun `wait for task pending and retention timeout`(taskMode: TaskMode) {
         // create tasks
-        val createdTasks = createTasksWithoutRecordId(taskMode).createdTasks
-        val taskIds = createdTasks.map { it.toTaskSearchIdentity() }
+        val createdTask1 = testDataClient.createBusinessPartnerTask("$testName 1", taskMode)
+        val createdTask2 = testDataClient.createBusinessPartnerTask("$testName 2", taskMode)
+        val taskIds = listOf(createdTask1, createdTask2).map { TaskStateRequest.Entry(it.taskId, it.recordId) }
 
         // check for state Pending
         checkStateForAllTasks(taskIds) {
@@ -113,9 +70,10 @@ class GoldenRecordTaskControllerIT @Autowired constructor(
     @EnumSource(TaskMode::class)
     fun `wait for task retention timeout after success`(taskMode: TaskMode) {
         // create single task in UpdateFromPool mode (only one step)
-        val createdTasks = createTasksWithoutRecordId(taskMode, listOf(defaultBusinessPartner1)).createdTasks
-        val createdTask = createdTasks.single()
-        val taskId = createdTask.taskId
+        val createdTask = testDataClient.createBusinessPartnerTask("$testName 1", taskMode)
+        val createdTasks = listOf(createdTask)
+        val taskId =  createdTask.taskId
+
 
         val allSteps = stateMachineConfigProperties.modeSteps[taskMode]!!
         allSteps.forEach { step ->
@@ -149,7 +107,8 @@ class GoldenRecordTaskControllerIT @Autowired constructor(
     @EnumSource(TaskMode::class)
     fun `wait for task retention timeout after error`(taskMode: TaskMode) {
         // create single task
-        val createdTasks = createTasksWithoutRecordId(taskMode, listOf(defaultBusinessPartner1)).createdTasks
+        val createdTask = testDataClient.createBusinessPartnerTask("$testName 1", taskMode)
+        val createdTasks = listOf(createdTask)
         val firstStep = stateMachineConfigProperties.modeSteps[taskMode]!!.first()
 
         // reserve task
@@ -183,15 +142,6 @@ class GoldenRecordTaskControllerIT @Autowired constructor(
     }
 
 
-    private fun createTasks(mode: TaskMode,
-                            entries: List<TaskCreateRequestEntry>? = null
-    ): TaskCreateResponse{
-        val resolvedEntries = entries ?: listOf(defaultBusinessPartner1, defaultBusinessPartner2).map { bp -> TaskCreateRequestEntry(null, bp) }
-        return orchestratorClient.goldenRecordTasks.createTasks(TaskCreateRequest(mode = mode, requests = resolvedEntries))
-    }
-
-    private fun createTasksWithoutRecordId(mode: TaskMode, businessPartners: List<BusinessPartner>? = null): TaskCreateResponse =
-        createTasks(mode, (businessPartners ?: listOf(defaultBusinessPartner1, defaultBusinessPartner2)).map{ bp -> TaskCreateRequestEntry(null, bp) })
 
     private fun reserveTasks(step: TaskStep, amount: Int = 3) =
         orchestratorClient.goldenRecordTasks.reserveTasksForStep(

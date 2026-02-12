@@ -20,7 +20,7 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.relation
 
 import org.assertj.core.api.Assertions
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.ResultState
 import org.eclipse.tractusx.orchestrator.api.model.TaskMode
 import org.eclipse.tractusx.orchestrator.api.model.TaskResultStateSearchRequest
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.web.reactive.function.client.WebClientResponseException
 
-class RelationTaskResultSearchV7IT: UnscheduledOrchestratorTestV7() {
+class RelationTaskResultSearchV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN relation task in pending state

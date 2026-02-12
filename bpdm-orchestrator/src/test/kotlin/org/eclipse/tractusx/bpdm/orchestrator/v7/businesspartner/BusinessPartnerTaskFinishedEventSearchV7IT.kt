@@ -20,12 +20,12 @@
 package org.eclipse.tractusx.bpdm.orchestrator.v7.businesspartner
 
 import org.eclipse.tractusx.bpdm.common.dto.PaginationRequest
-import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestV7
+import org.eclipse.tractusx.bpdm.orchestrator.v7.UnscheduledOrchestratorTestBaseV7
 import org.eclipse.tractusx.orchestrator.api.model.*
 import org.junit.jupiter.api.Test
 import java.time.Instant
 
-class BusinessPartnerTaskFinishedEventSearchV7IT: UnscheduledOrchestratorTestV7() {
+class BusinessPartnerTaskFinishedEventSearchV7IT: UnscheduledOrchestratorTestBaseV7() {
 
     /**
      * GIVEN task has been finished successfully
