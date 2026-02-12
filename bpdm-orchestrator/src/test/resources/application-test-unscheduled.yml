@@ -20,7 +20,7 @@ bpdm:
   task:
     timeoutCheckCron: "-"
   api:
-    upsert-limit: 100
+    upsert-limit: 10
 spring:
   datasource:
     hikari:

@@ -33,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration
     PostgreSQLContextInitializer::class,
     KeyCloakInitializer::class
 ])
-@ActiveProfiles("test")
+@ActiveProfiles("test-unscheduled")
 abstract class UnscheduledOrchestratorTestV7: OrchestratorTestV7(){
 
     @BeforeEach

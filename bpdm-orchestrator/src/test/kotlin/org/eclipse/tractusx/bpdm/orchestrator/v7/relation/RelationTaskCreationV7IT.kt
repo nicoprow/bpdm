@@ -132,7 +132,7 @@ class RelationTaskCreationV7IT: UnscheduledOrchestratorTestV7() {
         //WHEN
         val requestBody = TaskCreateRelationsRequest(
             taskMode,
-            (1 .. 101).map { requestFactory.buildRelationTaskCreateEntry("$testName $it", null) }
+            (1 .. 11).map { requestFactory.buildRelationTaskCreateEntry("$testName $it", null) }
         )
         val request: () -> Unit = { orchestratorClient.relationsGoldenRecordTasks.createTasks(requestBody) }
 
