@@ -2,13 +2,15 @@
 
 <!-- TOC -->
 * [Migration Guide](#migration-guide)
-  * [7.2.x to 7.3.x](#72x-to-73x)
-    * [1. Breaking rename of relation DTO fields (Gate)](#1-breaking-rename-of-relation-dto-fields-gate)
+  * [Next](#next)
+    * [Breaking rename of relation DTO fields (Gate)](#breaking-rename-of-relation-dto-fields-gate)
       * [Impact](#impact)
       * [Rationale](#rationale)
-    * [2. New relation type for addresses](#2-new-relation-type-for-addresses)
-    * [3. No required operator actions](#3-no-required-operator-actions)
-    * [4. Reason Codes](#4-reason-codes)
+    * [New relation type for addresses](#new-relation-type-for-addresses)
+    * [No required operator actions](#no-required-operator-actions)
+    * [Reason Codes](#reason-codes)
+  * [7.2.x to 7.3.x](#72x-to-73x)
+    * [Automatic Confidence Level](#automatic-confidence-level)
   * [7.1.x to 7.2.x](#71x-to-72x)
     * [Alternative Headquarters Restriction](#alternative-headquarters-restriction)
     * [Default Logging Level](#default-logging-level)
@@ -18,9 +20,10 @@
     * [Business Partner Identifier Amount Limit](#business-partner-identifier-amount-limit)
 <!-- TOC -->
 
-## 7.2.x to 7.3.x
 
-### 1. Breaking rename of relation DTO fields (Gate)
+## Next
+
+### Breaking rename of relation DTO fields (Gate)
 
 In previous releases, relation outputs in the Gate API exposed the fields:
 
@@ -39,21 +42,21 @@ To correct this and make the fields generic, the following rename was implemente
 
 #### Impact
 - This is technically a *breaking change* because:
-  - API response field names changed.
-  - Database column names changed accordingly.
+    - API response field names changed.
+    - Database column names changed accordingly.
 - However, these fields were **not used by any consumers** to date (based on internal usage and customer feedback).
 - Therefore the practical impact is negligible.
 
 #### Rationale
 - Gate now supports both:
-  - Legal entity relations → BPNL
-  - Address relations → BPNA
+    - Legal entity relations → BPNL
+    - Address relations → BPNA
 - A neutral naming scheme (`sourceBpn`, `targetBpn`) avoids confusion and future-proofs the API.
 - This change is required for consistency with the newly introduced address relation functionality.
 
 ---
 
-### 2. New relation type for addresses
+### New relation type for addresses
 
 Gate now exposes a dedicated relation type:
 
@@ -63,13 +66,13 @@ This type applies only to address relations and is validated accordingly.
 
 ---
 
-### 3. No required operator actions
+### No required operator actions
 
 - No existing data needs to be changed.
 - No cleanup or special deployment steps needed.
 
 
-### 4. Reason Codes
+### Reason Codes
 
 Each business partner relation now needs a mandatory reason code.
 Reason codes are not standardized and are therefore managed by the operator of the golden record process.
@@ -80,6 +83,17 @@ The list of available reason codes should be managed in the golden record Pool t
 > Since reason codes are mandatory and there are no default reason codes this repository does not contain any migration scripts for existing relations.
 > Therefore, if there are already relations present in BPDM the operator needs to add migration scripts assigning reason codes to those relations.
 
+## 7.2.x to 7.3.x
+
+### Automatic Confidence Level
+
+A golden record's confidence level is now automatically managed by the Pool according to the [golden record standards](https://catenax-ev.github.io/docs/next/standards/CX-0076-GoldenRecordEndtoEndRequirementsStandard#2112-confidence-level).
+
+Please be aware that this version will automatically update the confidence levels of all existing golden records in the Pool.
+This update will also result in changelog entries.
+This way, the new confidence levels will be propagated to all sharing members and interested parties.
+
+Please note that this migration will create changelog entries for every existing golden record in the Pool.
 
 ## 7.1.x to 7.2.x
 

@@ -1,6 +1,6 @@
 # bpdm
 
-![Version: 6.3.0-SNAPSHOT](https://img.shields.io/badge/Version-6.3.0--SNAPSHOT-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 7.3.0-SNAPSHOT](https://img.shields.io/badge/AppVersion-7.3.0--SNAPSHOT-informational?style=flat-square)
+![Version: 6.3.0-SNAPSHOT](https://img.shields.io/badge/Version-6.3.0--rc1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 7.3.0-SNAPSHOT](https://img.shields.io/badge/AppVersion-7.3.0--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes that deploys the BPDM applications
 
