@@ -80,6 +80,20 @@ postgres:
     # Change for production
     password: bpdm
 
+keycloak:
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/keycloak
+    tag: 25.0.6-debian-12-r0
+  auth:
+    adminUser: admin
+    # -- Keycloak administrator password.
+    adminPassword: ""
+    # -- Secret containing the password for admin username 'admin'.
+    existingSecret: ""
+  # -- Run Keycloak in production mode. TLS configuration is required except when using proxy=edge.
+  production: false
+
 centralidp:
   enabled: true
   keycloak:
