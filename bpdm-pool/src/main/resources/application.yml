@@ -75,7 +75,7 @@ bpdm:
         # The orchestrator client should use client credentials mechanism to request a token from the provider
         authorization-grant-type: client_credentials
         # Use a default client id for the client credentials request
-        client-id: BPDM_POOL
+        client-id: BPDM_REFINER_POOL_SYNC
         # Please provide a secret here
         client-secret: "**********"
   tasks:
