@@ -101,7 +101,7 @@ class OrchestratorRequestFactoryV7(
             uncategorized = UncategorizedProperties.empty,
             legalEntity = buildLegalEntityProperties(seed, random),
             site = null,
-            additionalAddress = commonFactory.buildPostalAddress(seed, AddressType.AdditionalAddress, random)
+            additionalAddress = commonFactory.buildPostalAddressWithScripVariants(seed, AddressType.AdditionalAddress, random)
         )
     }
 
@@ -112,7 +112,7 @@ class OrchestratorRequestFactoryV7(
             uncategorized = UncategorizedProperties.empty,
             legalEntity = buildLegalEntityProperties(seed, random),
             site = commonFactory.buildSite(seed, random),
-            additionalAddress = commonFactory.buildPostalAddress(seed, AddressType.AdditionalAddress, random)
+            additionalAddress = commonFactory.buildPostalAddressWithScripVariants(seed, AddressType.AdditionalAddress, random)
         )
     }
 
@@ -128,7 +128,8 @@ class OrchestratorRequestFactoryV7(
             confidenceCriteria = commonFactory.buildConfidenceCriteria(random),
             isParticipantData = random.nextBoolean(),
             hasChanged = random.nextBoolean(),
-            legalAddress = commonFactory.buildPostalAddress(seed, AddressType.LegalAddress, random)
+            legalAddress = commonFactory.buildPostalAddress(seed, AddressType.LegalAddress, random),
+            scriptVariants = listOf(commonFactory.buildLegalEntityScriptVariant(seed, random))
         )
     }
 

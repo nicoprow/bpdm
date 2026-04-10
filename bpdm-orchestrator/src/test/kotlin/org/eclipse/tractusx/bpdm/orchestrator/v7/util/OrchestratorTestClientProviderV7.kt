@@ -29,7 +29,6 @@ class OrchestratorTestClientProviderV7(
     private val ownWebServer: WebServer,
     private val bpdmWebClientProvider: BpdmWebClientProvider
 ) {
-
     fun createClient(oauth2RegistrationId: String?): OrchestrationApiClient {
         return OrchestrationApiClientImpl {
             bpdmWebClientProvider.builder(

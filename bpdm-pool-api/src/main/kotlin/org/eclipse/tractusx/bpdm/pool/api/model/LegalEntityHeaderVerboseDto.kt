@@ -29,7 +29,7 @@ import org.eclipse.tractusx.bpdm.common.dto.openapidescription.LegalEntityDescri
 import java.time.Instant
 
 @Schema(description = LegalEntityDescription.header)
-data class LegalEntityVerboseDto(
+data class LegalEntityHeaderVerboseDto(
 
     @get:Schema(description = LegalEntityDescription.bpnl)
     val bpnl: String,
@@ -54,7 +54,7 @@ data class LegalEntityVerboseDto(
 
     override val confidenceCriteria: ConfidenceCriteriaDto,
 
-    @get:Schema(description = "Indicates whether the legal entity is owned and thus provided by a Data Space Participant.")
+    @get:Schema(description = "Indicates whether the legal entity is owned and thus provided by a Data Space Participant.", name = "isParticipantData")
     val isParticipantData: Boolean,
 
     @get:Schema(description = CommonDescription.createdAt)
