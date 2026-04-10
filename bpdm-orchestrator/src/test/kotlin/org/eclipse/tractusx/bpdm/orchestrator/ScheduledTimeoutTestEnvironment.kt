@@ -30,5 +30,5 @@ import org.springframework.test.context.ContextConfiguration
     PostgreSQLContextInitializer::class,
     KeyCloakInitializer::class
 ])
-@ActiveProfiles("test-timeout")
+@ActiveProfiles("test-scheduled")
 annotation class ScheduledTimeoutTestEnvironment

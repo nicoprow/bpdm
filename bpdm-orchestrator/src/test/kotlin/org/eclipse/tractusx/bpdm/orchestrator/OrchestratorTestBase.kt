@@ -24,6 +24,8 @@ import org.eclipse.tractusx.bpdm.orchestrator.config.TaskConfigProperties
 import org.eclipse.tractusx.bpdm.test.util.DbTestHelpers
 import org.junit.jupiter.api.TestInfo
 import org.springframework.beans.factory.annotation.Autowired
+import kotlin.math.ceil
+import kotlin.math.floor
 
 /**
  * Base class for all Orchestrator tests
@@ -44,7 +46,17 @@ abstract class OrchestratorTestBase {
      * Needs to be overwritten and annotated with @BeforeEach as Junit does not pick the annotation up from the base class
      */
     protected open fun beforeEach(testInfo: TestInfo){
-        testName = testInfo.displayName
+        testName = testInfo.displayName.truncateMiddle(20)
         databaseHelpers.truncateDbTables()
+    }
+
+    private fun String.truncateMiddle(maxLength: Int): String {
+        if (length <= maxLength) return this
+
+        val charsToShow = maxLength - 3
+        val frontChars = ceil(charsToShow / 2.0).toInt()
+        val backChars = floor(charsToShow / 2.0).toInt()
+
+        return substring(0 until frontChars) + "..." + substring(length - backChars until length)
     }
 }
