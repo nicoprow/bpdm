@@ -41,6 +41,7 @@ class UltimateOwnerResolutionService(
     private val logger = KotlinLogging.logger { }
 
 
+    @Transactional(readOnly = true)
     fun resolveUltimateOwner(legalEntity: LegalEntityDb): String? {
         val visited = mutableSetOf<String>()
         return resolveUltimateOwnerWithCycleProtection(legalEntity, visited)
