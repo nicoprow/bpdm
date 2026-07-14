@@ -29,6 +29,7 @@ import org.eclipse.tractusx.bpdm.pool.exception.BpdmValidationException
 import org.eclipse.tractusx.bpdm.pool.repository.LegalEntityRelationEventTriggerRepository
 import org.eclipse.tractusx.bpdm.pool.repository.RelationRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
@@ -40,6 +41,7 @@ class OwnedByRelationUpsertService(
 ): IRelationUpsertStrategyService {
 
 
+    @Transactional
     override fun upsertRelation(upsertRequest: IRelationUpsertStrategyService.UpsertRequest): UpsertResult<RelationDb> {
         val proposedSource = upsertRequest.source
         val proposedTarget = upsertRequest.target

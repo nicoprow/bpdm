@@ -1449,7 +1449,7 @@ class TaskResolutionServiceTest @Autowired constructor(
             type = LegalEntityRelationType.IsOwnedBy,
             startNode = sourceEntity,
             endNode = targetEntity,
-            validityPeriods = mutableListOf(),
+            validityPeriods = mutableListOf(currentValidityPeriod()),
             reasonCode = null
         )
         relationRepository.save(relation)
@@ -1462,12 +1462,20 @@ class TaskResolutionServiceTest @Autowired constructor(
         val upsertRequest = IRelationUpsertStrategyService.UpsertRequest(
             source = sourceEntity,
             target = targetEntity,
-            validityPeriods = emptyList(),
+            validityPeriods = listOf(currentValidityPeriod()),
             existingRelation = null,
             reasonCode = null
         )
         ownedByRelationUpsertService.upsertRelation(upsertRequest)
     }
+
+    // Production rejects relations without validity periods (see TaskLegalEntityRelationsStepBuildService.validateValidityPeriods),
+    // so fixtures must supply a currently-active, open-ended period to mirror that guarantee.
+    private fun currentValidityPeriod() =
+        org.eclipse.tractusx.bpdm.pool.entity.RelationValidityPeriodDb(
+            validFrom = java.time.LocalDate.now().minusDays(1),
+            validTo = null
+        )
 
     private fun createIdentifiers(idTypeKey: String, amount: Int): List<Identifier>{
         return (1 .. amount).map { Identifier(it.toString(), idTypeKey, null) }
